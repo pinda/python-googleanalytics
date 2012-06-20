@@ -12,32 +12,38 @@ PRETTYPRINT = True
 TIMEOUT = 10
 
 class GAConnection:
-    default_host = 'https://www.google.com'
-    user_agent = 'python-gapi-1.0'
+    user_agent = 'python-gapi-v2'
     auth_token = None
 
     def __init__(self, google_email=None, google_password=None):
         authtoken_pat = re.compile(r"Auth=(.*)")
+        base_url = 'https://www.google.com'
         path = '/accounts/ClientLogin'
-
         if google_email == None or google_password == None:
             google_email, google_password = config.get_google_credentials()
 
-        data = "accountType=GOOGLE&Email=%s&Passwd=%s&service=analytics&source=%s"
-        data = data % (google_email, google_password, self.user_agent)
+        data = {
+            'accountType': 'GOOGLE',
+            'Email': google_email,
+            'Passwd': google_password,
+            'service': 'analytics',
+            'source': self.user_agent
+        }
         if DEBUG:
             print "Authenticating with %s / %s" % (google_email, google_password)
-        response = self.make_request('POST', path=path, data=data)
+        data = urllib.urlencode(data)
+        response = self.make_request('POST', base_url, path, data=data)
         auth_token = authtoken_pat.search(response.read())
         self.auth_token = auth_token.groups(0)[0]
 
     def get_accounts(self, start_index=1, max_results=None):
+        base_url = 'https://www.google.com'
         path = '/analytics/feeds/accounts/default'
-        data = {'start-index': start_index, }
+        data = {'start-index': start_index}
         if max_results:
             data['max-results'] = max_results
         data = urllib.urlencode(data)
-        response = self.make_request('GET', path, data=data)
+        response = self.make_request('GET', base_url, path, data=data)
         raw_xml = response.read()
         xml_tree = ElementTree.fromstring(raw_xml)
         account_list = []
@@ -72,12 +78,14 @@ class GAConnection:
             if account.profile_id == profile_id:
                 return account
 
-    def make_request(self, method, path, headers=None, data=''):
+    def make_request(self, method, base_url, path, headers=None, data=''):
         if headers == None:
             headers = {
                 'User-Agent': self.user_agent,
-                'Authorization': 'GoogleLogin auth=%s' % self.auth_token
+                'GData-Version': '2'
             }
+            if self.auth_token:
+                headers['Authorization'] = 'GoogleLogin auth=%s' % self.auth_token
         else:
             headers = headers.copy()
 
@@ -98,9 +106,9 @@ class GAConnection:
             data += "&prettyprint=true"
 
         if method == 'POST':
-            request = urllib2.Request(self.default_host + path, data, headers)
+            request = urllib2.Request(base_url + path, data, headers)
         elif method == 'GET':
-            request = urllib2.Request(self.default_host + path, headers=headers)
+            request = urllib2.Request(base_url + path, headers=headers)
 
         try:
             response = urllib2.urlopen(request, timeout=TIMEOUT)

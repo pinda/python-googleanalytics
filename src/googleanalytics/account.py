@@ -127,7 +127,8 @@ class Account:
           Number of results to return.
           
         """
-        path = '/analytics/feeds/data'
+        base_url = 'https://www.googleapis.com'
+        path = '/analytics/v2.4/data'
 
         if start_date > end_date:
             raise GoogleAnalyticsClientError('Date orders are reversed')
@@ -164,7 +165,7 @@ class Account:
             data['filters'] = filter_string
 
         data = urllib.urlencode(data)
-        response = self.connection.make_request('GET', path=path, data=data)
+        response = self.connection.make_request('GET', base_url, path=path, data=data)
         raw_xml = response.read()
         processed_data = DataSet(raw_xml)
         return processed_data
