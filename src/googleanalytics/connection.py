@@ -37,6 +37,8 @@ class GAConnection:
         self.auth_token = auth_token.groups(0)[0]
 
     def get_accounts(self, start_index=1, max_results=None):
+        if not hasattr(self, '_accounts'):
+            self._accounts = []
         base_url = 'https://www.google.com'
         path = '/analytics/feeds/accounts/default'
         data = {'start-index': start_index}
@@ -46,7 +48,6 @@ class GAConnection:
         response = self.make_request('GET', base_url, path, data=data)
         raw_xml = response.read()
         xml_tree = ElementTree.fromstring(raw_xml)
-        account_list = []
         accounts = xml_tree.getiterator('{http://www.w3.org/2005/Atom}entry')
         for account in accounts:
             account_data = {
@@ -70,8 +71,8 @@ class GAConnection:
                 profile_id=account_data['ga:profileId'],
                 web_property_id=account_data['ga:webPropertyId'],
             )
-            account_list.append(a)
-        return account_list
+                self._accounts.append(a)
+        return self._accounts
 
     def get_account(self, profile_id):
         for account in self.get_accounts():
