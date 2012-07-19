@@ -1,8 +1,6 @@
 from googleanalytics.exception import GoogleAnalyticsClientError
 from googleanalytics.data import DataSet
 
-import urllib
-
 filter_operators = ['==', '!=', '>', '<', '>=', '<=', '=~', '!~', '=@', '!@']
 
 class Account:
@@ -164,7 +162,6 @@ class Account:
             filter_string = self.process_filters(filters)
             data['filters'] = filter_string
 
-        data = urllib.urlencode(data)
         response = self.connection.make_request('GET', base_url, path=path, data=data)
         raw_xml = response.read()
         processed_data = DataSet(raw_xml)

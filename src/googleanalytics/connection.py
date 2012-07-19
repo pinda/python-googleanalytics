@@ -15,23 +15,24 @@ class GAConnection:
     user_agent = 'python-gapi-v2'
     auth_token = None
 
-    def __init__(self, google_email=None, google_password=None):
+    def __init__(self, google_email=None, google_password=None, api_key=None):
         authtoken_pat = re.compile(r"Auth=(.*)")
         base_url = 'https://www.google.com'
         path = '/accounts/ClientLogin'
-        if google_email == None or google_password == None:
-            google_email, google_password = config.get_google_credentials()
+        self._api_key = api_key
+        if not all([google_email, google_password, self._api_key]):
+            google_email, google_password, self._api_key = config.get_google_credentials()
 
         data = {
             'accountType': 'GOOGLE',
             'Email': google_email,
             'Passwd': google_password,
+            'key': self._api_key,
             'service': 'analytics',
             'source': self.user_agent
         }
         if DEBUG:
             print "Authenticating with %s / %s" % (google_email, google_password)
-        data = urllib.urlencode(data)
         response = self.make_request('POST', base_url, path, data=data)
         auth_token = authtoken_pat.search(response.read())
         self.auth_token = auth_token.groups(0)[0]
@@ -44,7 +45,6 @@ class GAConnection:
             data = {'start-index': start_index}
             if max_results:
                 data['max-results'] = max_results
-            data = urllib.urlencode(data)
             response = self.make_request('GET', base_url, path, data=data)
             raw_xml = response.read()
             xml_tree = ElementTree.fromstring(raw_xml)
@@ -94,6 +94,8 @@ class GAConnection:
 
         if DEBUG:
             print "** Headers: %s" % (headers,)
+        data['key'] = self._api_key
+        data = urllib.urlencode(data)
 
         if method == 'GET':
             path = '%s?%s' % (path, data)

@@ -9,13 +9,14 @@ You initiate the process by importing the `googleanalytics.Connection` class.  T
 [Credentials]
 google_account_email = youraccount@gmail.com
 google_account_password = yourpassword
+google_account_api_key = key-from-API-console
 </pre>
 
 The second method is to supply the credentials directly to the Connection object in your code like so:
 
 <pre>
 >>> from googleanalytics import Connection
->>> connection = Connection('clintecker@gmail.com', 'fakefake')
+>>> connection = Connection('clintecker@gmail.com', 'fakefake', 'key-from-API-console')
 </pre>
 
 If you are using the former (~/.pythongoogleanalytics) method, you can just make naked `Connection()` calls to set up your connection object.
@@ -26,7 +27,7 @@ You can retrieve a list of profiles associated with your account like so:
 
 <pre>
 >>> from googleanalytics import Connection
->>> connection = Connection('clintecker@gmail.com', 'fakefake')
+>>> connection = Connection('clintecker@gmail.com', 'fakefake', 'key-from-API-console')
 >>> accounts = connection.get_accounts()
 </pre>
 
@@ -55,7 +56,7 @@ Here's a really basic call:
 <pre>
 >>> from googleanalytics import Connection
 >>> import datetime
->>> connection = Connection('clintecker@gmail.com', 'fakefake')
+>>> connection = Connection('clintecker@gmail.com', 'fakefake', 'key-from-API-console')
 >>> account = connection.get_account('1234')
 >>> start_date = datetime.date(2009, 04, 10)
 >>> end_date = datetime.date(2009, 04, 10)
@@ -69,7 +70,7 @@ You can optionally retrieve metrics by various dimensions, such as a list of bro
 <pre>
 >>> from googleanalytics import Connection
 >>> import datetime
->>> connection = Connection('clintecker@gmail.com', 'fakefake')
+>>> connection = Connection('clintecker@gmail.com', 'fakefake', 'key-from-API-console')
 >>> account = connection.get_account('1234')
 >>> start_date = datetime.date(2009, 04, 10)
 >>> end_date = datetime.date(2009, 04, 10)
@@ -83,7 +84,7 @@ You could get Google to sort that for you (note FireFox is first now):
 <pre>
 >>> from googleanalytics import Connection
 >>> import datetime
->>> connection = Connection('clintecker@gmail.com', 'fakefake')
+>>> connection = Connection('clintecker@gmail.com', 'fakefake', 'key-from-API-console')
 >>> account = connection.get_account('1234')
 >>> start_date = datetime.date(2009, 04, 10)
 >>> end_date = datetime.date(2009, 04, 10)
@@ -97,7 +98,7 @@ And you could do some fun filtering, get a list of browsers, sorted descending b
 <pre>
 >>> from googleanalytics import Connection
 >>> import datetime
->>> connection = Connection('clintecker@gmail.com', 'fakefake')
+>>> connection = Connection('clintecker@gmail.com', 'fakefake', 'key-from-API-console')
 >>> account = connection.get_account('1234')
 >>> start_date = datetime.date(2009, 04, 10)
 >>> end_date = datetime.date(2009, 04, 10)
@@ -120,7 +121,7 @@ So how do you get useful data?  The quickest path to the dimension and metric da
 <pre>
 >>> from googleanalytics import Connection
 >>> import datetime
->>> connection = Connection('clintecker@gmail.com', 'fakefake')
+>>> connection = Connection('clintecker@gmail.com', 'fakefake', 'key-from-API-console')
 >>> account = connection.get_account('1234')
 >>> start_date = datetime.date(2009, 04, 10)
 >>> end_date = datetime.date(2009, 04, 10)
@@ -141,7 +142,7 @@ Patrick Collison has graciously implemented pulling multiple metrics and data in
 <pre>
 >>> from googleanalytics import Connection
 >>> import datetime
->>> connection = Connection('clintecker@gmail.com', 'fakefake')
+>>> connection = Connection('clintecker@gmail.com', 'fakefake', 'key-from-API-console')
 >>> account = connection.get_account('1234')
 >>> end_date = datetime.datetime.today()
 >>> start_date = end_date-datetime.timedelta(days=2)
@@ -169,7 +170,7 @@ Assume the following code as given in the following examples:
 <pre>
 >>> from googleanalytics import Connection
 >>> import datetime
->>> connection = Connection('clintecker@gmail.com', 'fakefake')
+>>> connection = Connection('clintecker@gmail.com', 'fakefake', 'key-from-API-console')
 >>> account = connection.get_account('1234')
 >>> end_date = datetime.datetime.today()
 >>> start_date = end_date-datetime.timedelta(days=2)

@@ -17,7 +17,8 @@ def get_google_credentials():
         return None, None
     google_account_email = config.get('Credentials', 'google_account_email')
     google_account_password = config.get('Credentials', 'google_account_password')
-    return google_account_email, google_account_password
+    google_account_api_key = config.get('Credentials', 'google_account_api_key')
+    return google_account_email, google_account_password, google_account_api_key
 
 
 def get_valid_profiles():
