@@ -7,13 +7,12 @@ import re
 import urllib
 import urllib2
 
-TIMEOUT = 10
-
 class GAConnection:
     user_agent = 'python-gapi-v2'
     auth_token = None
 
-    def __init__(self, google_email=None, google_password=None, api_key=None):
+    def __init__(self, google_email=None, google_password=None, api_key=None, timeout=10):
+        self._timeout = timeout
         authtoken_pat = re.compile(r"Auth=(.*)")
         base_url = 'https://www.google.com'
         path = '/accounts/ClientLogin'
@@ -100,7 +99,7 @@ class GAConnection:
             request = urllib2.Request(base_url + path, headers=headers)
 
         try:
-            response = urllib2.urlopen(request, timeout=TIMEOUT)
+            response = urllib2.urlopen(request, timeout=self._timeout)
         except urllib2.HTTPError, e:
             raise GoogleAnalyticsClientError(e)
         return response
