@@ -7,8 +7,6 @@ import re
 import urllib
 import urllib2
 
-DEBUG = False
-PRETTYPRINT = True
 TIMEOUT = 10
 
 class GAConnection:
@@ -31,8 +29,6 @@ class GAConnection:
             'service': 'analytics',
             'source': self.user_agent
         }
-        if DEBUG:
-            print "Authenticating with %s / %s" % (google_email, google_password)
         response = self.make_request('POST', base_url, path, data=data)
         auth_token = authtoken_pat.search(response.read())
         self.auth_token = auth_token.groups(0)[0]
@@ -92,23 +88,11 @@ class GAConnection:
         else:
             headers = headers.copy()
 
-        if DEBUG:
-            print "** Headers: %s" % (headers,)
         data['key'] = self._api_key
         data = urllib.urlencode(data)
 
         if method == 'GET':
             path = '%s?%s' % (path, data)
-
-        if DEBUG:
-            print "** Method: %s" % (method,)
-            print "** Path: %s" % (path,)
-            print "** Data: %s" % (data,)
-            print "** URL: %s" % (self.default_host + path)
-
-        if PRETTYPRINT:
-            # Doesn't seem to work yet...
-            data += "&prettyprint=true"
 
         if method == 'POST':
             request = urllib2.Request(base_url + path, data, headers)
