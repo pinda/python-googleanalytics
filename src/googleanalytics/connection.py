@@ -35,8 +35,8 @@ class GAConnection:
     def get_accounts(self, start_index=1, max_results=None):
         if not hasattr(self, '_accounts'):
             self._accounts = []
-            base_url = 'https://www.google.com'
-            path = '/analytics/feeds/accounts/default'
+            base_url = 'https://www.googleapis.com/analytics/v2.4'
+            path = '/management/accounts/~all/webproperties/~all/profiles'
             data = {'start-index': start_index}
             if max_results:
                 data['max-results'] = max_results
@@ -49,18 +49,18 @@ class GAConnection:
                     'title': account.find('{http://www.w3.org/2005/Atom}title').text,
                     'id': account.find('{http://www.w3.org/2005/Atom}id').text,
                     'updated': account.find('{http://www.w3.org/2005/Atom}updated').text,
-                    'table_id': account.find('{http://schemas.google.com/analytics/2009}tableId').text,
                 }
                 for f in account.getiterator('{http://schemas.google.com/analytics/2009}property'):
                     account_data[f.attrib['name']] = f.attrib['value']
+
                 a = Account(
                     connection=self,
                     title=account_data['title'],
                     id=account_data['id'],
                     updated=account_data['updated'],
-                    table_id=account_data['table_id'],
+                    table_id=account_data['dxp:tableId'],
                     account_id=account_data['ga:accountId'],
-                    account_name=account_data['ga:accountName'],
+                    account_name=account_data['ga:profileName'],
                     currency=account_data['ga:currency'],
                     time_zone=account_data['ga:timezone'],
                     profile_id=account_data['ga:profileId'],
